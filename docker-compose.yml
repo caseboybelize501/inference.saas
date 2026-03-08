@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  platform:
+    build: ./platform
+    ports:
+      - "8000:8000"
+    environment:
+      - IOAS_TOKEN=your_token
+      - IOAS_ENDPOINT=http://platform:8000
+      - JWT_SECRET=your_jwt_secret
+      - POSTGRES_URL=postgres://user:password@db/ioas_db
+      - REDIS_URL=redis://redis:6379/0
+      - STRIPE_KEY=your_stripe_key
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=ioas_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    volumes:
+      - redis_data:/data
+
+volumes:
+  db_data:
+  redis_data:

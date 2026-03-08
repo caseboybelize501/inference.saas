@@ -1,0 +1,19 @@
+{
+  "name": "ioas-dashboard",
+  "version": "1.0.0",
+  "description": "Dashboard for IOAS",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "recharts": "^2.1.15",
+    "websocket": "^1.0.34"
+  }
+}

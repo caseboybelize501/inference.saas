@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-jose
+asyncio
+aiohttp
+psycopg2-binary
+celery
+redis
+stripe
+pydantic
+alembic
+pgvector
+chromadb

@@ -1,0 +1,12 @@
+pynvml
+psutil
+httpx
+watchdog
+hashlib
+subprocess
+os
+json
+logging
+asyncio
+aiohttp
+python-jose
