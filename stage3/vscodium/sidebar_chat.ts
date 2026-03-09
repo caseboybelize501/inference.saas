@@ -13,6 +13,8 @@ export class SidebarChatProvider implements vscode.WebviewViewProvider {
     private _tokenManifest: any = null;
     private _currentContextTokens: number = 0;
     private readonly MAX_CONTEXT_TOKENS: number = 32768;
+    private _archetypeData: any = null;
+    private _projectArchetype: string = 'Unknown';
 
     constructor(
         private readonly _extensionUri: vscode.Uri,
@@ -21,6 +23,7 @@ export class SidebarChatProvider implements vscode.WebviewViewProvider {
         this._intelligenceClient = client;
         this._buildWorkspaceContext();
         this._loadTokenManifest();
+        this._detectArchetype();
     }
 
     public resolveWebviewView(
@@ -72,6 +75,14 @@ export class SidebarChatProvider implements vscode.WebviewViewProvider {
 
     private async _handleUserMessage(text: string, selectedCode?: { file: string; code: string; range: string }) {
         if (!this._view) return;
+
+        // Send archetype info to webview
+        this._view.webview.postMessage({
+            command: 'archetypeInfo',
+            name: this._projectArchetype,
+            peak: this._archetypeData ? `${this._archetypeData.peakTokens.toLocaleString()} tokens` : 'Unknown',
+            recommendation: this._getArchetypeRecommendation()
+        });
 
         // Calculate token budget
         const promptTokens = this._estimatePromptTokens(text);
@@ -229,6 +240,51 @@ Current workspace: ${this._workspaceContext.substring(0, 2000)}`
     private _estimatePromptTokens(text: string): number {
         // Rough estimate: 4 chars per token
         return Math.ceil(text.length / 4);
+    }
+
+    private _getArchetypeRecommendation(): string {
+        if (!this._archetypeData) return 'Loading...';
+        
+        const peak = this._archetypeData.peakTokens;
+        if (peak <= 10000) return '[OK] Safe for all GPUs';
+        if (peak <= 20000) return '[OK] Safe for most GPUs';
+        if (peak <= 35000) return '[WARN] Needs 24-32GB VRAM';
+        if (peak <= 70000) return '[WARN] Needs 40GB+ VRAM';
+        return '[FAIL] Use chunking/RAG';
+    }
+
+    private async _detectArchetype() {
+        try {
+            const workspaceFolders = vscode.workspace.workspaceFolders;
+            if (!workspaceFolders) return;
+
+            const layerlimitsPath = vscode.Uri.joinPath(
+                workspaceFolders[0].uri,
+                'layerlimits.json'
+            );
+
+            const layerlimitsData = await vscode.workspace.fs.readFile(layerlimitsPath);
+            this._archetypeData = JSON.parse(Buffer.from(layerlimitsData).toString('utf-8'));
+            
+            // Simple detection: check for APE-specific files
+            const files = await vscode.workspace.findFiles('**/*', '**/node_modules/**');
+            const fileNames = files.map(f => f.path.split('/').pop() || '');
+            
+            if (fileNames.includes('layerlimits.json') && fileNames.includes('token_manifest.json')) {
+                this._projectArchetype = 'APE Itself (ID:10)';
+            } else if (fileNames.includes('unity') || fileNames.includes('uproject')) {
+                this._projectArchetype = 'Game Engine (ID:05)';
+            } else if (fileNames.includes('requirements.txt') && fileNames.includes('main.py')) {
+                this._projectArchetype = 'REST API (ID:03)';
+            } else {
+                this._projectArchetype = 'Frontend (ID:01)';
+            }
+            
+            console.log(`[APEX] Detected archetype: ${this._projectArchetype}`);
+        } catch (error) {
+            console.error('[APEX] Failed to detect archetype:', error);
+            this._projectArchetype = 'Unknown';
+        }
     }
 
     private async _scanDirectory(dirPath: string, maxDepth: number, currentDepth: number = 0): Promise<string> {
@@ -594,6 +650,12 @@ Current workspace: ${this._workspaceContext.substring(0, 2000)}`
         </div>
     </div>
 
+    <div class="archetype-info" id="archetypeInfo" style="display:none; padding: 8px 12px; font-size: 10px; background: var(--vscode-editor-inactiveSelectionBackground); border-bottom: 1px solid var(--vscode-widget-border);">
+        <strong>Project:</strong> <span id="archetypeName">Unknown</span> | 
+        <strong>Peak:</strong> <span id="archetypePeak">-</span> | 
+        <strong>Recommendation:</strong> <span id="archetypeRec">-</span>
+    </div>
+
     <div class="chat-container" id="chatContainer">
         <div class="welcome" id="welcomeMsg">
             <h4>AI Code Assistant</h4>
@@ -635,6 +697,19 @@ Current workspace: ${this._workspaceContext.substring(0, 2000)}`
             const tokenBudgetFill = document.getElementById('tokenBudgetFill');
             const promptTokensEl = document.getElementById('promptTokens');
             const fileTokensEl = document.getElementById('fileTokens');
+            const archetypeInfo = document.getElementById('archetypeInfo');
+            const archetypeName = document.getElementById('archetypeName');
+            const archetypePeak = document.getElementById('archetypePeak');
+            const archetypeRec = document.getElementById('archetypeRec');
+
+            // Show archetype info
+            function showArchetype(name, peak, rec) {
+                if (!archetypeInfo) return;
+                archetypeInfo.style.display = 'block';
+                archetypeName.textContent = name;
+                archetypePeak.textContent = peak;
+                archetypeRec.textContent = rec;
+            }
 
             // Update token budget display
             function updateTokenBudget(contextTokens, maxTokens, fileTokens, promptTokens) {
@@ -745,6 +820,9 @@ Current workspace: ${this._workspaceContext.substring(0, 2000)}`
                         addMessage('assistant', 'Error: ' + message.message);
                         isLoading = false;
                         if (sendBtn) sendBtn.disabled = false;
+                        break;
+                    case 'archetypeInfo':
+                        showArchetype(message.name, message.peak, message.recommendation);
                         break;
                 }
             });
