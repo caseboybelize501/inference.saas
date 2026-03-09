@@ -124,27 +124,27 @@ async def get_context(request: ContextQuery):
 async def create_completion(request: CompletionRequest):
     """Generate code completion."""
     start_time = time.time()
-    
+
     # Build context from current file and surroundings
     context_query = ContextQuery(
-        query=request.prefix.split('\n')[-10:],  # Last 10 lines as query
+        query=request.prefix.split('\n')[-10:] if request.prefix else [],  # Last 10 lines as query
         workspace_root=workspace_root or "",
         cursor_file=request.file,
         cursor_line=request.line,
         max_chunks=5,
         strategy="hybrid"
     )
-    
+
     context = await context_packager.rank(context_query) if context_packager else ContextResult(chunks=[], total_tokens_est=0)
-    
+
     # Assemble prompt
     # In production, would call Stage 1 /v1/completions here
-    
+
     latency_ms = int((time.time() - start_time) * 1000)
-    
+
     return CompletionResult(
         completion="# TODO: Implementation requires Stage 1 integration",
-        context_used=[chunk.file for chunk in context.chunks],
+        context_used=[c.file for c in context.chunks] if context and context.chunks else [],
         model_used="apex-code-v1",
         latency_ms=latency_ms
     )

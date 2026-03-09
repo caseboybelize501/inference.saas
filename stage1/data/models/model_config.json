@@ -1,0 +1,128 @@
+{
+  "models": [
+    {
+      "name": "mistral-7b-instruct-v0.2.Q4_K_M",
+      "path": "mistral-7b-instruct-v0.2.Q4_K_M.gguf",
+      "full_path": "D:/AI/models/mistral-7b-instruct-v0.2.Q4_K_M.gguf",
+      "size_gb": 4.1,
+      "type": "instruct",
+      "vram_required_gb": 6,
+      "recommended_for": ["general", "chat", "code-assist"],
+      "priority": 1
+    },
+    {
+      "name": "qwen3.5-9b",
+      "path": "qwen3.5-9b.gguf",
+      "full_path": "D:/Users/CASE/models/qwen3.5-9b.gguf",
+      "size_gb": 6.1,
+      "type": "instruct",
+      "vram_required_gb": 8,
+      "recommended_for": ["code", "reasoning", "general"],
+      "priority": 2
+    },
+    {
+      "name": "glm-4.7-flash",
+      "path": "glm-4.7-flash.gguf",
+      "full_path": "D:/Users/CASE/models/glm-4.7-flash.gguf",
+      "size_gb": 5.0,
+      "type": "instruct",
+      "vram_required_gb": 7,
+      "recommended_for": ["fast-inference", "general"],
+      "priority": 3
+    },
+    {
+      "name": "qwen2.5-coder-32b",
+      "path": "qwen2.5-coder-32b.gguf",
+      "full_path": "D:/Users/CASE/models/qwen2.5-coder-32b.gguf",
+      "size_gb": 20.0,
+      "type": "instruct",
+      "vram_required_gb": 24,
+      "recommended_for": ["code-generation", "code-review"],
+      "priority": 4
+    },
+    {
+      "name": "qwen3-coder-30b",
+      "path": "qwen3-coder-30b.gguf",
+      "full_path": "D:/Users/CASE/models/qwen3-coder-30b.gguf",
+      "size_gb": 20.0,
+      "type": "instruct",
+      "vram_required_gb": 24,
+      "recommended_for": ["code-generation", "code-review"],
+      "priority": 5
+    },
+    {
+      "name": "qwen3.5-27b",
+      "path": "qwen3.5-27b.gguf",
+      "full_path": "D:/Users/CASE/models/qwen3.5-27b.gguf",
+      "size_gb": 17.0,
+      "type": "instruct",
+      "vram_required_gb": 20,
+      "recommended_for": ["reasoning", "code", "general"],
+      "priority": 6
+    },
+    {
+      "name": "nemotron-3-nano-30b",
+      "path": "nemotron-3-nano-30b.gguf",
+      "full_path": "D:/Users/CASE/models/nemotron-3-nano-30b.gguf",
+      "size_gb": 19.0,
+      "type": "instruct",
+      "vram_required_gb": 22,
+      "recommended_for": ["reasoning", "general"],
+      "priority": 7
+    },
+    {
+      "name": "qwen3.5-35b-a3b",
+      "path": "qwen3.5-35b-a3b.gguf",
+      "full_path": "D:/Users/CASE/models/qwen3.5-35b-a3b.gguf",
+      "size_gb": 22.0,
+      "type": "instruct",
+      "vram_required_gb": 26,
+      "recommended_for": ["advanced-reasoning", "code"],
+      "priority": 8
+    },
+    {
+      "name": "qwen3.5-35b",
+      "path": "qwen3.5-35b.gguf",
+      "full_path": "D:/Users/CASE/models/qwen3.5-35b.gguf",
+      "size_gb": 22.0,
+      "type": "instruct",
+      "vram_required_gb": 26,
+      "recommended_for": ["advanced-reasoning", "code"],
+      "priority": 9
+    },
+    {
+      "name": "nomic-embed-text-v1.5",
+      "path": "nomic-embed-text-v1.5.F16.gguf",
+      "full_path": "D:/Users/CASE/.lmstudio/.internal/bundled-models/nomic-ai/nomic-embed-text-v1.5.F16.gguf",
+      "size_gb": 0.08,
+      "type": "embedding",
+      "vram_required_gb": 1,
+      "recommended_for": ["embeddings", "semantic-search"],
+      "priority": 10
+    }
+  ],
+  "vocab_files": [
+    {"name": "aquila", "path": "vocab-aquila.gguf"},
+    {"name": "baichuan", "path": "vocab-baichuan.gguf"},
+    {"name": "bert-bge", "path": "vocab-bert-bge.gguf"},
+    {"name": "command-r", "path": "vocab-command-r.gguf"},
+    {"name": "deepseek-coder", "path": "vocab-deepseek-coder.gguf"},
+    {"name": "deepseek-llm", "path": "vocab-deepseek-llm.gguf"},
+    {"name": "falcon", "path": "vocab-falcon.gguf"},
+    {"name": "gpt-2", "path": "vocab-gpt-2.gguf"},
+    {"name": "gpt-neox", "path": "vocab-gpt-neox.gguf"},
+    {"name": "llama-bpe", "path": "vocab-llama-bpe.gguf"},
+    {"name": "llama-spm", "path": "vocab-llama-spm.gguf"},
+    {"name": "mpt", "path": "vocab-mpt.gguf"},
+    {"name": "nomic-bert-moe", "path": "vocab-nomic-bert-moe.gguf"},
+    {"name": "phi-3", "path": "vocab-phi-3.gguf"},
+    {"name": "qwen2", "path": "vocab-qwen2.gguf"},
+    {"name": "refact", "path": "vocab-refact.gguf"},
+    {"name": "starcoder", "path": "vocab-starcoder.gguf"}
+  ],
+  "defaults": {
+    "primary_model": "mistral-7b-instruct-v0.2.Q4_K_M",
+    "embedding_model": "nomic-embed-text-v1.5",
+    "fallback_model": "qwen3.5-9b"
+  }
+}

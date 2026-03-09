@@ -98,17 +98,26 @@ current_model: Optional[ModelSpec] = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager."""
-    global server_manager, vram_monitor, start_time
-    
-    server_manager = LlamaServerManager()
+    global server_manager, vram_monitor, start_time, current_model
+
+    # Use external llama-server on port 8080
+    server_manager = LlamaServerManager(external_port=8080)
     vram_monitor = VRAMMonitor()
     start_time = time.time()
     
+    # Set current model info for the external server
+    current_model = ModelSpec(
+        path="qwen2.5-coder-32b.gguf",
+        quant="Q4_K_M",
+        vram_required_gb=20.0,
+        context_length=32768,
+        family="qwen",
+        size="32B"
+    )
+
     yield
-    
-    # Cleanup
-    if server_manager:
-        server_manager.stop()
+
+    # Cleanup (don't stop external server)
     if vram_monitor:
         vram_monitor.shutdown()
 
@@ -210,12 +219,27 @@ async def list_models():
 async def get_health():
     """Get server health status."""
     global start_time
-    
+
     uptime = time.time() - start_time if start_time else 0
+    
+    # Check if external llama-server is responding
+    llama_server_healthy = False
+    if server_manager:
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                response = await client.get(f"http://127.0.0.1:{server_manager.port}/health")
+                llama_server_healthy = response.status_code == 200
+        except Exception:
+            llama_server_healthy = False
+    
     server_status = server_manager.get_status() if server_manager else {"running": False}
-    
+    # Override running status if external server is healthy
+    if llama_server_healthy:
+        server_status["running"] = True
+        server_status["pid"] = server_manager.pid or 0
+
     vram_data = vram_monitor.get_usage() if vram_monitor else {"vram_used": 0, "vram_total": 0}
-    
+
     return HealthResponse(
         status="healthy" if server_status.get("running") else "unhealthy",
         vram_used_gb=vram_data.get("vram_used", 0),

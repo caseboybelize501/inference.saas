@@ -12,13 +12,14 @@ from contracts.models.model_config import ModelSpec
 
 class LlamaServerManager:
     """Manages llama-server subprocess lifecycle."""
-    
-    def __init__(self, llama_server_path: Optional[str] = None):
+
+    def __init__(self, llama_server_path: Optional[str] = None, external_port: Optional[int] = None):
         """
         Initialize server manager.
-        
+
         Args:
             llama_server_path: Path to llama-server binary (auto-detect if None)
+            external_port: Port of external llama-server (if running separately)
         """
         self.llama_server_path = llama_server_path or self._find_llama_server()
         self.process: Optional[subprocess.Popen] = None
@@ -26,7 +27,12 @@ class LlamaServerManager:
         self.start_time: Optional[datetime] = None
         self.restart_count: int = 0
         self.current_model: Optional[ModelSpec] = None
-        self.port: int = 8080
+        self.port: int = external_port or 8080
+        
+        # Check if external llama-server is already running
+        if external_port or self._check_existing_server():
+            self.pid = 0  # External server
+            self.start_time = datetime.now()
     
     def spawn(self, model: ModelSpec, gpu_layers: int = -1) -> bool:
         """
@@ -158,7 +164,16 @@ class LlamaServerManager:
         """Find llama-server binary in PATH."""
         import shutil
         return shutil.which("llama-server")
-    
+
+    def _check_existing_server(self, timeout: int = 2) -> bool:
+        """Check if llama-server is already running on port."""
+        import httpx
+        try:
+            response = httpx.get(f"http://127.0.0.1:{self.port}/health", timeout=timeout)
+            return response.status_code == 200
+        except Exception:
+            return False
+
     def _wait_for_server(self, timeout: int = 30) -> bool:
         """
         Wait for server to become responsive.

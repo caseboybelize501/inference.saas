@@ -1,0 +1,56 @@
+{
+  "total_files": 10,
+  "total_tokens": 19643,
+  "files": [
+    {
+      "path": "d:\\Users\\CASE\\projects\\inference.saas\\.vscode\\extensions.json",
+      "tokens": 54,
+      "chars": 219
+    },
+    {
+      "path": "d:\\Users\\CASE\\projects\\inference.saas\\.vscode\\launch.json",
+      "tokens": 327,
+      "chars": 1308
+    },
+    {
+      "path": "d:\\Users\\CASE\\projects\\inference.saas\\.vscode\\settings.json",
+      "tokens": 230,
+      "chars": 922
+    },
+    {
+      "path": "d:\\Users\\CASE\\projects\\inference.saas\\.vscode\\tasks.json",
+      "tokens": 479,
+      "chars": 1916
+    },
+    {
+      "path": "d:\\Users\\CASE\\projects\\inference.saas\\dashboard\\package.json",
+      "tokens": 108,
+      "chars": 435
+    },
+    {
+      "path": "d:\\Users\\CASE\\projects\\inference.saas\\shared\\hardware_profile.json",
+      "tokens": 27,
+      "chars": 111
+    },
+    {
+      "path": "d:\\Users\\CASE\\projects\\inference.saas\\stage3\\vscodium\\package-lock.json",
+      "tokens": 16012,
+      "chars": 64049
+    },
+    {
+      "path": "d:\\Users\\CASE\\projects\\inference.saas\\stage3\\vscodium\\package.json",
+      "tokens": 1222,
+      "chars": 4890
+    },
+    {
+      "path": "d:\\Users\\CASE\\projects\\inference.saas\\stage3\\vscodium\\tsconfig.json",
+      "tokens": 110,
+      "chars": 440
+    },
+    {
+      "path": "d:\\Users\\CASE\\projects\\inference.saas\\stage1\\data\\models\\model_config.json",
+      "tokens": 1074,
+      "chars": 4296
+    }
+  ]
+}

@@ -5,12 +5,14 @@ import { IntelligenceClient } from './intelligence_client';
 import { CompletionProvider } from './completion';
 import { HoverProvider } from './hover';
 import { StatusBar } from './status_bar';
+import { SidebarChatProvider } from './sidebar_chat';
 
 let intelligenceClient: IntelligenceClient | undefined;
 let completionProvider: CompletionProvider | undefined;
 let hoverProviderInstance: HoverProvider | undefined;
 let statusBar: StatusBar | undefined;
-let statusPollTimer: NodeJS.Timer | undefined;
+let statusPollTimer: NodeJS.Timeout | undefined;
+let sidebarChatProvider: SidebarChatProvider | undefined;
 
 const INTELLIGENCE_API_URL = 'http://localhost:3001';
 
@@ -23,6 +25,31 @@ export function activate(context: vscode.ExtensionContext) {
     // Initialize status bar
     statusBar = new StatusBar();
     statusBar.updateConnecting();
+
+    // Initialize sidebar chat provider - ALWAYS register for RIGHT activity bar
+    if (intelligenceClient) {
+        sidebarChatProvider = new SidebarChatProvider(context.extensionUri, intelligenceClient);
+        const sidebarDisposable = vscode.window.registerWebviewViewProvider(
+            SidebarChatProvider.viewType,
+            sidebarChatProvider,
+            {
+                webviewOptions: {
+                    retainContextWhenHidden: true
+                }
+            }
+        );
+        context.subscriptions.push(sidebarDisposable);
+        
+        // Auto-open chat panel on startup if enabled
+        const config = vscode.workspace.getConfiguration('apex');
+        if (config.get('autoOpenChat', true)) {
+            setTimeout(() => {
+                // Open the chat panel in the right activity bar
+                vscode.commands.executeCommand('apex-activitybar.focus');
+                vscode.commands.executeCommand('apex.chatSidebar.focus');
+            }, 1000);
+        }
+    }
 
     // Initialize completion provider
     completionProvider = new CompletionProvider(intelligenceClient, statusBar);
@@ -87,6 +114,41 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     context.subscriptions.push(refactorCommand);
+
+    // Chat command - opens sidebar
+    const chatCommand = vscode.commands.registerCommand('apex.chat', async () => {
+        await vscode.commands.executeCommand('apex.chatSidebar.focus');
+    });
+    context.subscriptions.push(chatCommand);
+
+    // Focus command - opens APEX chat on right side
+    const focusCommand = vscode.commands.registerCommand('apex.focus', async () => {
+        vscode.commands.executeCommand('workbench.action.openAuxiliaryBar');
+        vscode.commands.executeCommand('apex.chatSidebar.focus');
+    });
+    context.subscriptions.push(focusCommand);
+
+    // Show status command
+    const showStatusCommand = vscode.commands.registerCommand('apex.showStatus', async () => {
+        const health = await intelligenceClient?.healthCheck();
+        vscode.window.showInformationMessage(
+            `APEX Status: ${health ? '✅ Connected' : '❌ Disconnected'}\n` +
+            `Server: ${INTELLIGENCE_API_URL}\n` +
+            `Services: Stage 1 (3000), Stage 2 (3001), llama.cpp (8080)`
+        );
+    });
+    context.subscriptions.push(showStatusCommand);
+
+    // Rebuild index command
+    const rebuildIndexCommand = vscode.commands.registerCommand('apex.rebuildIndex', async () => {
+        vscode.window.showInformationMessage('Index rebuild initiated. This may take a few minutes...');
+        try {
+            await vscode.commands.executeCommand('workbench.action.openTerminal');
+        } catch (error) {
+            vscode.window.showErrorMessage('Failed to rebuild index: ' + error);
+        }
+    });
+    context.subscriptions.push(rebuildIndexCommand);
 
     // Start polling status
     startStatusPolling();

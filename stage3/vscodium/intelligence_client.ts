@@ -87,7 +87,7 @@ export class IntelligenceClient {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            return await response.json();
+            return await response.json() as ContextResult;
         } catch (error) {
             console.error('APEX: getContext error:', error);
             return null;
@@ -120,7 +120,7 @@ export class IntelligenceClient {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            return await response.json();
+            return await response.json() as CompletionResult;
         } catch (error) {
             console.error('APEX: complete error:', error);
             return null;
@@ -149,7 +149,7 @@ export class IntelligenceClient {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            return await response.json();
+            return await response.json() as ExplainResult;
         } catch (error) {
             console.error('APEX: explain error:', error);
             return null;
@@ -178,7 +178,7 @@ export class IntelligenceClient {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            return await response.json();
+            return await response.json() as RefactorResult;
         } catch (error) {
             console.error('APEX: refactor error:', error);
             return null;
@@ -195,7 +195,7 @@ export class IntelligenceClient {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            const data = await response.json();
+            const data = await response.json() as { symbols?: Symbol[] };
             return data.symbols || [];
         } catch (error) {
             console.error('APEX: getSymbols error:', error);
@@ -213,7 +213,7 @@ export class IntelligenceClient {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            return await response.json();
+            return await response.json() as { callers: Symbol[]; callees: Symbol[]; depth_searched: number };
         } catch (error) {
             console.error('APEX: getCallGraph error:', error);
             return { callers: [], callees: [], depth_searched: depth };
@@ -228,7 +228,7 @@ export class IntelligenceClient {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            return await response.json();
+            return await response.json() as IndexStatus;
         } catch (error) {
             console.error('APEX: getIndexStatus error:', error);
             throw error;

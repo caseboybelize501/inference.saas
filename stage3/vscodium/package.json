@@ -1,7 +1,7 @@
 {
   "name": "apex-code-intelligence",
   "displayName": "APEX Code Intelligence",
-  "description": "AI-powered code intelligence with on-demand completions, explanations, and refactoring",
+  "description": "AI-powered code intelligence with chat sidebar, completions, explanations, and refactoring",
   "version": "1.0.0",
   "publisher": "apex",
   "engines": {
@@ -13,24 +13,69 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage"
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "views": {
+      "apex-chat-container": [
+        {
+          "type": "webview",
+          "id": "apex.chatSidebar",
+          "name": "APEX AI Chat",
+          "icon": "$(comment-discussion)",
+          "contextualTitle": "APEX Chat"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "apex-activitybar",
+          "title": "APEX AI Assistant",
+          "icon": "$(robot)",
+          "when": "apex.enabled",
+          "target": "right"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "apex.chat",
+          "when": "view == apex.chatSidebar",
+          "group": "navigation"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "apex.complete",
         "title": "APEX: Trigger Completion",
-        "category": "APEX"
+        "category": "APEX",
+        "icon": "$(sparkle)"
       },
       {
         "command": "apex.explain",
         "title": "APEX: Explain Selection",
-        "category": "APEX"
+        "category": "APEX",
+        "icon": "$(lightbulb)"
       },
       {
         "command": "apex.refactor",
         "title": "APEX: Refactor Code",
+        "category": "APEX",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "apex.chat",
+        "title": "APEX: Open Chat",
+        "category": "APEX",
+        "icon": "$(comment)"
+      },
+      {
+        "command": "apex.focus",
+        "title": "APEX: Focus Sidebar",
         "category": "APEX"
       },
       {
@@ -62,6 +107,18 @@
         "key": "ctrl+shift+r",
         "mac": "cmd+shift+r",
         "when": "editorHasSelection"
+      },
+      {
+        "command": "apex.chat",
+        "key": "ctrl+shift+l",
+        "mac": "cmd+shift+l",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "apex.focus",
+        "key": "ctrl+shift+;",
+        "mac": "cmd+shift+;",
+        "when": "editorTextFocus"
       }
     ],
     "menus": {
@@ -83,6 +140,10 @@
         {
           "command": "apex.refactor",
           "group": "APEX"
+        },
+        {
+          "command": "apex.chat",
+          "group": "APEX"
         }
       ]
     },
@@ -95,6 +156,11 @@
     "configuration": {
       "title": "APEX Code Intelligence",
       "properties": {
+        "apex.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable APEX AI Assistant"
+        },
         "apex.intelligenceApiUrl": {
           "type": "string",
           "default": "http://localhost:3001",
@@ -109,6 +175,11 @@
           "type": "boolean",
           "default": false,
           "description": "Enable automatic completions (on-demand only recommended)"
+        },
+        "apex.autoOpenChat": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically open chat sidebar on startup"
         }
       }
     }

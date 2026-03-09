@@ -1,0 +1,211 @@
+00 — OVERVIEW: ALL 10 ARCHETYPES
+#ARCHETYPEBASE TOKENSPEAK TOKENSPEAK LAYERTRUST CROSSOVERDECAY RATEFINAL CTX %COMPLEXITY
+01
+Frontend Only
+React/Vue SPA —
+Supabase
+8,00011,200L3 LAYER 2 0.75 — Fast3.1% LOW
+02
+Full Stack Web
+Next.js + Node +
+PostgreSQL
+22,00033,000L3 LAYER 2 0.55 — Med4.9% MEDIUM
+03
+REST API
+FastAPI /
+Express
+microservice
+14,00020,300L3 LAYER 2 0.70 — Fast3.5% LOW-MED
+04
+CLI Tool
+Python/Rust
+command-line
+6,0008,100L2 LAYER 1 0.80 — Fast2.3% LOWEST
+05
+Game Engine
+Unity/Unreal /
+custom engine
+85,000191,250L3 LAYER 4 0.30 — Slow12.8%EXTREME
+06
+ML Pipeline
+Training +
+inference + data
+45,000101,250L5 LAYER 3 0.40 — Slow10.2%HIGH
+07
+Mobile App
+React Native /
+Flutter
+18,00027,720L3 LAYER 2 0.60 — Med4.3% MEDIUM
+08
+Data ETL
+Airflow / dbt /
+Spark
+28,00044,800L4 LAYER 3 0.50 — Med8.1% HIGH-MED
+09Embedded / IoT
+C/Rust firmware38,00073,100L3 LAYER 4 0.35 — Slow11.5%HIGH
+10
+APE Itself
+Autonomous agent
+system
+55,000107,250L3 LAYER 3 0.45 — Med9.0% EXTREME
+01 — FRONTEND ONLY
+Frontend OnlyReact / Vue SPA — Supabase hosted
+Base tokens: 8,000Peak: L3 · 11,200 tokTrust crossover: Layer 2Decay: 0.75 — Fast
+APE — ARCHETYPE SCALE MODELS // CONTEXT DEMAND × TRUST ACCUMULATION
+10 archetypes · same phase engine · different token weight distributions per layer
+Lowest token volume of all archetypes. Layer 3 is heaviest (component tree generation). Trust compounds fast — no
+backend complexity, no infra surface. Context demand near-zero by Layer 5. Ideal first project to run APE on.
+LAYERPHASE EST. TOKENSCTX DEMANDTRUST BUILTNET HEADROOMFILESWEIGHT
+L0Vision Freeze8,000 100%0% −100% 10.6x
+L1Architecture Planning6,400 52%53% +1% 90.8x
+L2Code Planning11,200 28%78% +50% 101.0x
+L3Code Generation9,800 17%89% +72% 150.7x
+L4Integration Test5,600 11%95% +84% 50.4x
+L5Perf Test 4,200 7% 97% +90% 30.3x
+L6Deploy 2,800 5% 98% +93% 20.2x
+L7Monitor + Self-Repair1,680 3% 99% +96% 20.15x
+02 — FULL STACK WEB APP
+Full Stack Web AppNext.js + Node API + PostgreSQL
+Base tokens: 22,000Peak: L3 · 33,000 tokTrust crossover: Layer 2Decay: 0.55 — Medium
+Layer 4 (integration) is critical — frontend/backend contract verification is where full-stack projects break. Token
+spike at Layer 3 (40+ files). Trust crossover at Layer 2-3. Security layer non-trivial due to auth surface. Layer 2 must
+define API contracts perfectly or Layer 3 drifts on both sides simultaneously.
+LAYERPHASE EST. TOKENSCTX DEMANDTRUST BUILTNET HEADROOMFILESWEIGHT
+L0Vision Freeze22,000 100%0% −100% 10.8x
+L1Architecture Planning22,000 63%42% −21% 91.0x
+L2Code Planning24,200 38%66% +28% 111.0x
+L3Code Generation33,000 25%80% +55% 401.2x
+L4Integration Test24,750 17%89% +72% 120.9x
+L5Perf + Security19,800 12%94% +82% 80.6x
+L6Deploy + Monitor11,000 7% 97% +90% 50.3x
+L7Self-Repair5,500 5% 99% +94% 20.2x
+03 — REST API / MICROSERVICE
+REST API / MicroservicePython FastAPI / Node Express — standalone service
+Base tokens: 14,000Peak: L3 · 20,300 tokTrust crossover: Layer 2Decay: 0.70 — Fast
+Endpoint validation heaviest at Layer 4. Security layer significant — exposed API surface requires auth, rate limiting,
+input validation. Perf layer critical for latency SLAs. Clean archetype — well-defined scope keeps trust accumulation
+fast.
+LAYERPHASE EST. TOKENSCTX DEMANDTRUST BUILTNET HEADROOMFILESWEIGHT
+L0Vision Freeze8,400 100%0% −100% 10.5x
+L1Architecture Planning12,600 55%50% −5% 90.9x
+L2Code Planning15,400 31%75% +44% 101.0x
+L3Code Generation20,300 20%87% +67% 251.0x
+L4Integration + Security16,800 13%93% +80% 100.8x
+L5Perf + Deploy9,800 8% 97% +89% 60.5x
+L6Monitor + Self-Repair4,200 4% 99% +95% 30.2x
+04 — CLI TOOL
+CLI Tool / Dev ToolPython / Rust command-line utility
+Base tokens: 6,000Peak: L2 · 8,100 tokTrust crossover: Layer 1Decay: 0.80 — Fastest
+Fastest trust accumulation of ALL archetypes. Crossover happens at Layer 1 — architecture planning alone builds enough
+trust to free significant context. Minimal security/deploy surface. Context near-zero by Layer 4. Best archetype to
+prove the APE methodology works end-to-end quickly.
+LAYERPHASE EST. TOKENSCTX DEMANDTRUST BUILTNET HEADROOMFILESWEIGHT
+L0Vision Freeze2,400 100%0% −100% 10.4x
+L1Architecture Planning4,200 46%55% +9% 90.7x
+L2Code Planning8,100 23%80% +57% 90.9x
+L3Code Generation7,200 14%91% +77% 120.8x
+L4Integration + Perf3,600 9% 96% +87% 50.4x
+L5Deploy + Monitor1,800 5% 99% +94% 20.2x
+05 — GAME ENGINE / REAL-TIME
+Game Engine / Real-TimeUnity / Unreal / custom engine — physics + rendering
+Base tokens: 85,000Peak: L3 · 191,250 tokTrust crossover: Layer 4Decay: 0.30 — Slowest
+HIGHEST token volume of all archetypes. Layer 3 is massive — 120+ files across physics, AI, rendering, audio, input
+systems. Perf layer is as heavy as code gen — frame budget is law, not suggestion. Trust crossover delayed to Layer 4-5
+due to system interdependency. This is where APE is most valuable and most necessary. Without the phase engine, game
+codebases drift catastrophically.
+LAYERPHASE EST. TOKENSCTX DEMANDTRUST BUILTNET HEADROOMFILESWEIGHT
+L0Vision Freeze85,000 100%0% −100% 11.0x
+L1Architecture Planning85,000 78%26% −52% 91.0x
+L2Code Planning102,000 60%45% −15% 121.0x
+L3Code Generation191,250 47%59% +12% 1201.5x
+L4Integration Test148,750 37%70% +33% 301.3x
+L5Perf (frame budget)136,000 29%79% +50% 201.2x
+L6Security + Deploy68,000 21%86% +65% 100.6x
+L7Monitor + Self-Repair51,000 13%93% +80% 80.4x
+06 — ML / AI PIPELINE
+ML / AI PipelineTraining pipeline + inference API + data processing
+Base tokens: 45,000Peak: L5 · 101,250 tokTrust crossover: Layer 3Decay: 0.40 — Slow
+Unique: peak token layer is L5 (perf), not L3 (code gen). Model latency + throughput benchmarking is as expensive as
+writing the code. Data pipeline validation at Layer 4 is the most complex integration of any archetype — schema
+contracts, null handling, type coercion. Layer 2 must define data contracts perfectly. If it doesn't, Layer 3 drifts on
+both training and inference simultaneously.
+LAYERPHASE EST. TOKENSCTX DEMANDTRUST BUILTNET HEADROOMFILESWEIGHT
+L0Vision Freeze 40,500 100%0% −100% 10.9x
+L1Architecture Planning45,000 73%33% −40% 91.0x
+L2Code Planning 49,500 52%55% +3% 111.0x
+L3Code Generation81,000 38%71% +33% 501.2x
+L4Integration (data contracts)67,500 28%80% +52% 181.0x
+L5Perf (latency/throughput)101,25021%87% +66% 151.3x
+L6Security + Deploy31,500 15%93% +78% 70.5x
+L7Monitor + Self-Repair22,50010%97% +87% 60.4x
+07 — MOBILE APP
+Mobile AppReact Native / Flutter — iOS + Android
+Base tokens: 18,000Peak: L3 · 27,720 tokTrust crossover: Layer 2Decay: 0.60 — Medium
+Deploy layer heavier than web — App Store + Play Store submission is a phase in itself. Security layer significant —
+device permissions, keychain, biometrics, certificate pinning. Perf layer critical — 60fps constraint on both platforms
+simultaneously. Cross-platform parity validation adds weight to Layer 4.
+LAYERPHASE EST. TOKENSCTX DEMANDTRUST BUILTNET HEADROOMFILESWEIGHT
+L0Vision Freeze 12,600 100%0% −100% 10.7x
+L1Architecture Planning16,200 59%45% −14% 90.9x
+L2Code Planning 19,800 35%70% +35% 101.0x
+L3Code Generation27,720 23%83% +60% 351.1x
+L4Integration (cross-platform)21,600 15%91% +76% 100.8x
+L5Perf + Security16,20010%95% +85% 80.6x
+L6App Store Deploy16,2007% 97% +90% 60.6x
+L7Monitor + Self-Repair5,400 4% 99% +95% 30.2x
+08 — DATA ENGINEERING / ETL
+Data Engineering / ETLAirflow / dbt / Spark pipeline
+Base tokens: 28,000Peak: L4 · 44,800 tokTrust crossover: Layer 3Decay: 0.50 — Medium
+Integration + perf layers are the two heaviest — data contracts and throughput dominate this archetype. Monitor layer
+unusually heavy compared to others — pipeline observability is a core product feature, not an afterthought. Layer 2
+dependency graph is the most critical document in this archetype. One wrong dependency order breaks entire pipeline
+runs.
+LAYERPHASE EST. TOKENSCTX DEMANDTRUST BUILTNET HEADROOMFILESWEIGHT
+L0Vision Freeze 19,600 100%0% −100% 10.7x
+L1Architecture Planning28,000 68%39% −29% 91.0x
+L2Code Planning 30,800 46%61% +15% 101.0x
+L3Code Generation43,400 33%78% +45% 351.1x
+L4Integration (schema/contracts)44,800 24%86% +62% 201.2x
+L5Perf (throughput)39,200 17%92% +75% 121.0x
+L6Deploy + Monitor (heavy)28,00011%96% +85% 90.7x
+L7Self-Repair 11,2007% 98% +91% 30.3x
+09 — EMBEDDED / IOT
+Embedded / IoT SystemC / Rust firmware — hardware integration
+Base tokens: 38,000Peak: L3 · 73,100 tokTrust crossover: Layer 4Decay: 0.35 — Slow
+Perf layer as heavy as code gen — memory constraints are hard limits, not targets. Every byte is accounted for. Security
+layer critical — physical attack surface, firmware signing, secure boot chain. Second slowest trust accumulation after
+game engines. Layer 2 module dependencies must be perfect — no runtime flexibility in firmware. No dynamic linking. No
+late binding. Everything must be resolved at compile time.
+LAYERPHASE EST. TOKENSCTX DEMANDTRUST BUILTNET HEADROOMFILESWEIGHT
+L0Vision Freeze30,400 100%0% −100% 10.8x
+L1Architecture Planning38,000 76%29% −47% 91.0x
+L2Code Planning38,000 56%50% −6% 101.0x
+L3Code Generation73,100 42%64% +22% 451.3x
+L4Integration (hardware)57,000 32%74% +42% 151.1x
+L5Perf (memory budget)68,400 24%83% +59% 181.2x
+L6Security + Deploy30,400 17%90% +73% 70.6x
+L7Monitor + Self-Repair22,800 12%95% +83% 50.4x
+10 — AUTONOMOUS AGENT (APE ITSELF)
+Autonomous Agent / APE ItselfMulti-layer AI orchestration system
+Base tokens: 55,000Peak: L3 · 107,250 tokTrust crossover: Layer 3Decay: 0.45 — Medium-Slow
+Self-repair layer is the heaviest per-file of any archetype — it IS the core product feature. Monitor layer unusually
+heavy — agent observability is critical infrastructure, not logging. Layer 2 is the most conceptually complex of any
+archetype — agent contracts, phase gate logic, context handoff protocols. This is APE building itself. The recursion is
+intentional. The methodology proves itself by being the method used to build it.
+LAYERPHASE EST. TOKENSCTX DEMANDTRUST BUILTNET HEADROOMFILESWEIGHT
+L0Vision Freeze 55,000 100%0% −100% 11.0x
+L1Architecture Planning55,000 75%36% −39% 91.0x
+L2Code Planning (dense)71,500 54%57% +3% 121.0x
+L3Code Generation107,250 39%72% +33% 651.3x
+L4Integration (agent handoffs)82,500 29%82% +53% 201.1x
+L5Perf + Security60,500 21%89% +68% 120.8x
+L6Deploy + Monitor (heavy)49,500 15%94% +79% 110.7x
+L7Self-Repair (core product)77,0009% 98% +89% 101.0x
+// KEY FINDING
+Token volume per layer cannot be generalized. A single model is wrong.
+Game engines run 10x the token volume of CLI tools.
+ML pipelines peak at Layer 5, not Layer 3 — perf is the real cost.
+Embedded systems delay trust crossover to Layer 4 — no runtime flexibility.
+APE itself has the heaviest self-repair layer of any archetype — it is the product.
+The phase engine is identical for all 10. The weight distribution is unique to each.
+Archetype-aware profiling is required to model context demand accurately.
