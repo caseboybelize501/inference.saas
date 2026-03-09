@@ -11,15 +11,72 @@ Built **contract-first** so each stage is independently replaceable without touc
 
 ---
 
+## ⚠️ Hardware Requirements & Limitations
+
+### Know Your Hardware
+
+**APEX token counts and context estimates are GUIDES, not failsafes.** You must understand your hardware limitations to avoid crashes or OOM (Out of Memory) errors.
+
+| Component | Minimum | Recommended | Optimal |
+|-----------|---------|-------------|---------|
+| **GPU** | NVIDIA RTX 3060 12GB | RTX 4070 Ti 16GB | **RTX 5090 32GB** |
+| **VRAM** | 12 GB | 16-24 GB | 32+ GB |
+| **CUDA** | 12.0+ | 13.1+ | 13.1+ |
+| **System RAM** | 16 GB | 32 GB | 64+ GB |
+| **Storage** | SSD required | NVMe SSD | NVMe Gen4 |
+
+### Context Token Budget
+
+| Context Size | VRAM Required (KV Cache) | Total VRAM (32B Model) | Safe For |
+|--------------|-------------------------|------------------------|----------|
+| 8,192 tokens | ~2 GB | ~22 GB | ✅ All GPUs |
+| 16,384 tokens | ~4 GB | ~24 GB | ✅ 24GB+ GPUs |
+| **32,768 tokens** | ~8 GB | ~28 GB | ✅ **32GB GPUs** |
+| 65,536 tokens | ~16 GB | ~36 GB | ⚠️ 40GB+ GPUs |
+| 128,000 tokens | ~32 GB | ~52 GB | ❌ Consumer GPUs |
+
+**Your token budget:**
+- **Prompt tokens** ≈ `characters / 4`
+- **File tokens** = from `token_manifest.json`
+- **Total context** = Prompt + File + Conversation history
+
+**APEX will reject requests exceeding 32,768 tokens by default.** This is a SOFT LIMIT to protect your hardware - you can increase it, but you risk OOM crashes.
+
+### Model Selection Guide
+
+| Your GPU VRAM | Safe Model Size | Example Models |
+|---------------|-----------------|----------------|
+| 8-12 GB | 7B-13B | mistral-7b, qwen3.5-9b |
+| 16-20 GB | 13B-20B | qwen2.5-coder-14b |
+| 24-32 GB | 20B-35B | **qwen2.5-coder-32b**, qwen3.5-35b |
+| 40+ GB | 70B+ | qwen2.5-72b |
+
+---
+
 ## Quick Start
 
 ### Prerequisites
 
-- NVIDIA GPU with CUDA 12+ (or AMD ROCm / Apple Silicon)
-- `llama-server` binary in PATH (from [llama.cpp](https://github.com/ggerganov/llama.cpp))
-- Python 3.11+
-- Node.js 20+ (for VSCodium extension)
-- Docker + Docker Compose (optional, for containerized deployment)
+**Before running APEX, you MUST:**
+
+1. **Know your GPU specs:**
+   - Run `nvidia-smi` to check VRAM
+   - Note your CUDA version
+   - Understand your GPU's memory limits
+
+2. **Understand token budgets:**
+   - Token counts are **ESTIMATES** (chars / 4)
+   - Your actual context limit depends on VRAM
+   - Default: 32,768 tokens (adjust in `sidebar_chat.ts`)
+
+3. **Required software:**
+   - NVIDIA GPU with CUDA 12+ (or AMD ROCm / Apple Silicon)
+   - `llama-server` binary (from [llama.cpp](https://github.com/ggerganov/llama.cpp))
+   - Python 3.11+
+   - Node.js 20+ (for VSCodium extension)
+   - Docker + Docker Compose (optional, for containerized deployment)
+
+**⚠️ WARNING:** Token estimates are GUIDES, not hard limits. Exceeding your hardware's capacity will cause OOM crashes. Monitor VRAM with `nvidia-smi` or the `/v1/health` endpoint.
 
 ### Installation
 
