@@ -1,0 +1,436 @@
+openapi: 3.0.3
+info:
+  title: Intelligence API
+  description: Stage 2 codebase intelligence API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001
+    description: Local intelligence server
+
+paths:
+  /v1/context:
+    post:
+      summary: Get ranked context for query
+      operationId: getContext
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContextRequest'
+      responses:
+        '200':
+          description: Ranked context chunks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContextResponse'
+
+  /v1/complete:
+    post:
+      summary: Generate code completion
+      operationId: createCompletion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompletionRequest'
+      responses:
+        '200':
+          description: Code completion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompletionResponse'
+
+  /v1/explain:
+    post:
+      summary: Explain code selection
+      operationId: explainCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExplainRequest'
+      responses:
+        '200':
+          description: Code explanation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExplainResponse'
+
+  /v1/refactor:
+    post:
+      summary: Refactor code with instruction
+      operationId: refactorCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefactorRequest'
+      responses:
+        '200':
+          description: Refactored code with diff
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefactorResponse'
+
+  /v1/symbols:
+    get:
+      summary: List symbols in file
+      operationId: listSymbols
+      parameters:
+        - name: file
+          in: query
+          required: true
+          schema:
+            type: string
+          description: File path
+      responses:
+        '200':
+          description: List of symbols
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SymbolsResponse'
+
+  /v1/callgraph:
+    get:
+      summary: Get call graph for symbol
+      operationId: getCallGraph
+      parameters:
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Symbol name
+        - name: depth
+          in: query
+          schema:
+            type: integer
+            default: 3
+          description: Search depth
+      responses:
+        '200':
+          description: Call graph
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallGraphResponse'
+
+  /v1/index/status:
+    get:
+      summary: Get index status
+      operationId: getIndexStatus
+      responses:
+        '200':
+          description: Index status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexStatusResponse'
+
+  /v1/index/rebuild:
+    post:
+      summary: Rebuild index
+      operationId: rebuildIndex
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RebuildRequest'
+      responses:
+        '200':
+          description: Rebuild job started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RebuildResponse'
+
+components:
+  schemas:
+    ContextRequest:
+      type: object
+      required:
+        - query
+        - workspace_root
+      properties:
+        query:
+          type: string
+          description: Search query
+        workspace_root:
+          type: string
+          description: Workspace root path
+        cursor_file:
+          type: string
+          description: Current file path
+        cursor_line:
+          type: integer
+          description: Current line number
+        max_chunks:
+          type: integer
+          default: 10
+          description: Maximum chunks to return
+        strategy:
+          type: string
+          enum: [semantic, callgraph, hybrid]
+          default: hybrid
+          description: Ranking strategy
+
+    ContextResponse:
+      type: object
+      required:
+        - chunks
+        - total_tokens_est
+      properties:
+        chunks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Chunk'
+        total_tokens_est:
+          type: integer
+
+    Chunk:
+      type: object
+      required:
+        - file
+        - start_line
+        - end_line
+        - content
+        - score
+        - reason
+      properties:
+        file:
+          type: string
+        start_line:
+          type: integer
+        end_line:
+          type: integer
+        content:
+          type: string
+        score:
+          type: number
+        reason:
+          type: string
+
+    CompletionRequest:
+      type: object
+      required:
+        - file
+        - line
+        - col
+        - prefix
+        - suffix
+      properties:
+        file:
+          type: string
+          description: Current file path
+        line:
+          type: integer
+          description: Current line number
+        col:
+          type: integer
+          description: Current column number
+        prefix:
+          type: string
+          description: Code before cursor
+        suffix:
+          type: string
+          description: Code after cursor
+        max_tokens:
+          type: integer
+          default: 256
+          description: Maximum tokens to generate
+
+    CompletionResponse:
+      type: object
+      required:
+        - completion
+        - context_used
+        - model_used
+        - latency_ms
+      properties:
+        completion:
+          type: string
+        context_used:
+          type: array
+          items:
+            type: string
+          description: Chunk IDs used as context
+        model_used:
+          type: string
+        latency_ms:
+          type: integer
+
+    ExplainRequest:
+      type: object
+      required:
+        - file
+        - start_line
+        - end_line
+      properties:
+        file:
+          type: string
+        start_line:
+          type: integer
+        end_line:
+          type: integer
+        question:
+          type: string
+          description: Optional specific question
+
+    ExplainResponse:
+      type: object
+      required:
+        - explanation
+        - symbols_referenced
+        - context_used
+      properties:
+        explanation:
+          type: string
+        symbols_referenced:
+          type: array
+          items:
+            type: string
+        context_used:
+          type: array
+          items:
+            $ref: '#/components/schemas/Chunk'
+
+    RefactorRequest:
+      type: object
+      required:
+        - file
+        - start_line
+        - end_line
+        - instruction
+      properties:
+        file:
+          type: string
+        start_line:
+          type: integer
+        end_line:
+          type: integer
+        instruction:
+          type: string
+          description: Refactoring instruction
+
+    RefactorResponse:
+      type: object
+      required:
+        - original
+        - refactored
+        - diff
+        - explanation
+      properties:
+        original:
+          type: string
+        refactored:
+          type: string
+        diff:
+          type: string
+          description: Unified diff format
+        explanation:
+          type: string
+
+    SymbolsResponse:
+      type: object
+      required:
+        - symbols
+      properties:
+        symbols:
+          type: array
+          items:
+            $ref: '#/components/schemas/Symbol'
+
+    Symbol:
+      type: object
+      required:
+        - name
+        - kind
+        - file
+        - line
+        - col
+      properties:
+        name:
+          type: string
+        kind:
+          type: string
+          enum: [function, class, method, import, variable, constant]
+        file:
+          type: string
+        line:
+          type: integer
+        col:
+          type: integer
+        docstring:
+          type: string
+          nullable: true
+
+    CallGraphResponse:
+      type: object
+      required:
+        - callers
+        - callees
+        - depth_searched
+      properties:
+        callers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Symbol'
+        callees:
+          type: array
+          items:
+            $ref: '#/components/schemas/Symbol'
+        depth_searched:
+          type: integer
+
+    IndexStatusResponse:
+      type: object
+      required:
+        - files_indexed
+        - last_updated
+        - embedding_model
+        - index_size_mb
+        - watching
+      properties:
+        files_indexed:
+          type: integer
+        last_updated:
+          type: string
+          format: date-time
+        embedding_model:
+          type: string
+        index_size_mb:
+          type: number
+        watching:
+          type: boolean
+
+    RebuildRequest:
+      type: object
+      required:
+        - workspace_root
+      properties:
+        workspace_root:
+          type: string
+        force:
+          type: boolean
+          default: false
+
+    RebuildResponse:
+      type: object
+      required:
+        - job_id
+        - estimated_s
+      properties:
+        job_id:
+          type: string
+        estimated_s:
+          type: integer

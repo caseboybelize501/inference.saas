@@ -1,0 +1,7 @@
+{
+  "gpus": [],
+  "system_ram": 0,
+  "cuda_version": null,
+  "llama_server_path": null,
+  "platform": "auto"
+}

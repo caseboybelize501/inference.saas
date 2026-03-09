@@ -1,0 +1,266 @@
+openapi: 3.0.3
+info:
+  title: Inference API
+  description: Stage 1 OpenAI-compatible inference runtime API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local inference server
+
+paths:
+  /v1/completions:
+    post:
+      summary: Generate completion
+      operationId: createCompletion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - model
+                - prompt
+              properties:
+                model:
+                  type: string
+                  description: Model ID to use
+                prompt:
+                  type: string
+                  description: Prompt text
+                max_tokens:
+                  type: integer
+                  default: 256
+                  description: Maximum tokens to generate
+                temperature:
+                  type: number
+                  default: 0.7
+                  minimum: 0
+                  maximum: 2
+                  description: Sampling temperature
+                stream:
+                  type: boolean
+                  default: false
+                  description: Enable SSE streaming
+      responses:
+        '200':
+          description: Completion response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompletionResponse'
+            text/event-stream:
+              schema:
+                type: string
+                description: SSE stream of completion chunks
+        '503':
+          description: Service unavailable (model not loaded)
+
+  /v1/embeddings:
+    post:
+      summary: Generate embeddings
+      operationId: createEmbeddings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - model
+                - input
+              properties:
+                model:
+                  type: string
+                  description: Embedding model ID
+                input:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of texts to embed
+      responses:
+        '200':
+          description: Embeddings response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmbeddingsResponse'
+
+  /v1/models:
+    get:
+      summary: List available models
+      operationId: listModels
+      responses:
+        '200':
+          description: List of models
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelsResponse'
+
+  /v1/health:
+    get:
+      summary: Get server health status
+      operationId: getHealth
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /v1/load:
+    post:
+      summary: Load a model
+      operationId: loadModel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - model_path
+              properties:
+                model_path:
+                  type: string
+                  description: Path to GGUF model file
+                quant_override:
+                  type: string
+                  description: Optional quantization override
+      responses:
+        '200':
+          description: Model loaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoadResponse'
+
+components:
+  schemas:
+    CompletionResponse:
+      type: object
+      required:
+        - id
+        - choices
+        - usage
+      properties:
+        id:
+          type: string
+        choices:
+          type: array
+          items:
+            type: object
+            required:
+              - text
+              - finish_reason
+            properties:
+              text:
+                type: string
+              finish_reason:
+                type: string
+                enum: [stop, length, error]
+        usage:
+          type: object
+          properties:
+            prompt_tokens:
+              type: integer
+            completion_tokens:
+              type: integer
+            total_tokens:
+              type: integer
+
+    EmbeddingsResponse:
+      type: object
+      required:
+        - data
+        - usage
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+              - embedding
+              - index
+            properties:
+              embedding:
+                type: array
+                items:
+                  type: number
+              index:
+                type: integer
+        usage:
+          type: object
+          properties:
+            prompt_tokens:
+              type: integer
+            total_tokens:
+              type: integer
+
+    ModelsResponse:
+      type: object
+      required:
+        - models
+      properties:
+        models:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - path
+              - quant
+              - vram_gb
+              - loaded
+            properties:
+              id:
+                type: string
+              path:
+                type: string
+              quant:
+                type: string
+              vram_gb:
+                type: number
+              loaded:
+                type: boolean
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - vram_used_gb
+        - vram_total_gb
+        - model_loaded
+        - llama_server_pid
+        - uptime_s
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        vram_used_gb:
+          type: number
+        vram_total_gb:
+          type: number
+        model_loaded:
+          type: boolean
+        llama_server_pid:
+          type: integer
+          nullable: true
+        uptime_s:
+          type: number
+
+    LoadResponse:
+      type: object
+      required:
+        - loaded
+        - vram_used_gb
+        - model_id
+      properties:
+        loaded:
+          type: boolean
+        vram_used_gb:
+          type: number
+        model_id:
+          type: string

@@ -1,35 +1,51 @@
 version: '3.8'
 
 services:
-  platform:
-    build: ./platform
+  stage1:
+    build:
+      context: ./stage1
+      dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "3000:3000"
+    volumes:
+      - ./stage1/data/models:/app/data/models:ro
+      - ./shared:/app/shared
     environment:
-      - IOAS_TOKEN=your_token
-      - IOAS_ENDPOINT=http://platform:8000
-      - JWT_SECRET=your_jwt_secret
-      - POSTGRES_URL=postgres://user:password@db/ioas_db
-      - REDIS_URL=redis://redis:6379/0
-      - STRIPE_KEY=your_stripe_key
+      - APEX_WORKSPACE=/workspace
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  stage2:
+    build:
+      context: ./stage2
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./workspace:/workspace:ro
+      - ./stage2/data:/app/data
+      - ./shared:/app/shared
+    environment:
+      - APEX_WORKSPACE=/workspace
+      - INFERENCE_API_URL=http://stage1:3000
     depends_on:
-      - db
-      - redis
-
-  db:
-    image: postgres:16
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=ioas_db
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7
-    volumes:
-      - redis_data:/data
+      - stage1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
 
 volumes:
-  db_data:
-  redis_data:
+  stage2_data:

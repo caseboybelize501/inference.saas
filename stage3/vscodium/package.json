@@ -1,0 +1,131 @@
+{
+  "name": "apex-code-intelligence",
+  "displayName": "APEX Code Intelligence",
+  "description": "AI-powered code intelligence with on-demand completions, explanations, and refactoring",
+  "version": "1.0.0",
+  "publisher": "apex",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "apex.complete",
+        "title": "APEX: Trigger Completion",
+        "category": "APEX"
+      },
+      {
+        "command": "apex.explain",
+        "title": "APEX: Explain Selection",
+        "category": "APEX"
+      },
+      {
+        "command": "apex.refactor",
+        "title": "APEX: Refactor Code",
+        "category": "APEX"
+      },
+      {
+        "command": "apex.showStatus",
+        "title": "APEX: Show Status",
+        "category": "APEX"
+      },
+      {
+        "command": "apex.rebuildIndex",
+        "title": "APEX: Rebuild Index",
+        "category": "APEX"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "apex.complete",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "apex.explain",
+        "key": "ctrl+shift+e",
+        "mac": "cmd+shift+e",
+        "when": "editorHasSelection"
+      },
+      {
+        "command": "apex.refactor",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorHasSelection"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "submenu": "apex.submenu",
+          "group": "APEX"
+        }
+      ],
+      "apex.submenu": [
+        {
+          "command": "apex.complete",
+          "group": "APEX"
+        },
+        {
+          "command": "apex.explain",
+          "group": "APEX"
+        },
+        {
+          "command": "apex.refactor",
+          "group": "APEX"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "apex.submenu",
+        "label": "APEX AI"
+      }
+    ],
+    "configuration": {
+      "title": "APEX Code Intelligence",
+      "properties": {
+        "apex.intelligenceApiUrl": {
+          "type": "string",
+          "default": "http://localhost:3001",
+          "description": "URL of the Intelligence API server"
+        },
+        "apex.maxTokens": {
+          "type": "number",
+          "default": 256,
+          "description": "Maximum tokens for completions"
+        },
+        "apex.enableAutoComplete": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable automatic completions (on-demand only recommended)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts,tsx"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.80.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.45.0",
+    "typescript": "^5.1.0"
+  },
+  "dependencies": {}
+}
